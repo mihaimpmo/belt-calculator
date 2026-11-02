@@ -1,12 +1,11 @@
 {
   "name": "belt-calculator",
   "version": "1.0.0",
-  "description": "Belt length and center distance calculator with an animated drawing.",
+  "description": "Belt length from center distance and pitch diameters, with an animated drawing.",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test",
-    "start": "npx --yes serve ."
+    "test": "node --test"
   },
   "license": "MIT"
 }
