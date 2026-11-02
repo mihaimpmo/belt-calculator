@@ -1,0 +1,12 @@
+{
+  "name": "calculator-curea",
+  "version": "1.0.0",
+  "description": "Calculator pentru lungimea curelei și distanța dintre centre, cu desen animat.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "start": "npx --yes serve ."
+  },
+  "license": "MIT"
+}
