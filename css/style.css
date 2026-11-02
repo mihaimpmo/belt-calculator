@@ -103,7 +103,7 @@ body {
 
 button, input, select { font: inherit; color: inherit; }
 
-/* ---------- antet ---------- */
+/* ---------- header ---------- */
 
 .top {
   max-width: 1360px;
@@ -175,7 +175,7 @@ button, input, select { font: inherit; color: inherit; }
   box-shadow: var(--shadow);
 }
 
-/* ---------- panou ---------- */
+/* ---------- panel ---------- */
 
 .panel {
   padding: 16px;
@@ -272,7 +272,7 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-s
   border: 1px solid var(--line);
   border-radius: 11px;
 }
-.seg-3 { grid-template-columns: 1fr 1.3fr 1fr; }
+.seg-3 { grid-template-columns: 1fr 1fr 1fr; }
 
 .seg button {
   height: 34px;
@@ -300,7 +300,7 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-s
   margin: 2px 0 0;
 }
 
-/* ---------- scena ---------- */
+/* ---------- stage ---------- */
 
 .main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
@@ -375,7 +375,7 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-s
 #play[aria-pressed="false"] .ic-play { display: block; }
 #play[aria-pressed="false"] .ic-pause { display: none; }
 
-/* ---------- rezultate ---------- */
+/* ---------- results ---------- */
 
 .results {
   display: grid;
@@ -425,7 +425,7 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-s
 .warning.error { background: var(--err-bg); color: var(--err); }
 .warning svg { width: 16px; height: 16px; flex: none; margin-top: 2px; fill: currentColor; }
 
-/* ---------- formule ---------- */
+/* ---------- formulas ---------- */
 
 .formulas { grid-column: 1 / -1; padding: 18px 20px 20px; }
 .formulas > h2 { margin: 0 0 14px; font-size: 16px; font-weight: 600; }
@@ -474,7 +474,7 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-s
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ---------- ecrane mici ---------- */
+/* ---------- small screens ---------- */
 
 @media (max-width: 960px) {
   .layout { grid-template-columns: 1fr; }

@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ro">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Calculator curea</title>
-  <meta name="description" content="Lungimea curelei și distanța dintre centre pentru două roți, cu desen animat al transmisiei.">
+  <title>Belt Calculator</title>
+  <meta name="description" content="Belt length and center distance for two pulleys, with an animated drawing of the drive.">
   <meta name="theme-color" content="#f3f2ee">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 
@@ -26,95 +26,95 @@
         <path d="M8.2 6.05 L28.8 3.08 M8.2 17.95 L28.8 20.92" />
       </svg>
       <div>
-        <h1>Calculator curea</h1>
-        <p>două roți · curea deschisă</p>
+        <h1>Belt Calculator</h1>
+        <p>two pulleys · open belt</p>
       </div>
     </div>
     <div class="top-actions">
-      <button class="ghost-btn" id="share" type="button">Copiază link</button>
-      <button class="icon-btn" id="theme" type="button" aria-label="Schimbă tema">
+      <button class="ghost-btn" id="share" type="button">Copy link</button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Toggle theme">
         <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 3a7 7 0 0 1 0 14z"/></svg>
       </button>
     </div>
   </header>
 
   <main class="layout">
-    <aside class="panel" aria-label="Date de intrare">
-      <div class="seg" id="mode" role="group" aria-label="Tip de calcul">
-        <button type="button" data-mode="timing">Curea dințată</button>
-        <button type="button" data-mode="diameter">Diametre</button>
+    <aside class="panel" aria-label="Inputs">
+      <div class="seg" id="mode" role="group" aria-label="Calculation type">
+        <button type="button" data-mode="timing">Timing belt</button>
+        <button type="button" data-mode="diameter">Diameters</button>
       </div>
 
       <section class="group" data-show="timing">
-        <h2>Curea</h2>
+        <h2>Belt</h2>
         <label class="field">
-          <span>Profil</span>
+          <span>Profile</span>
           <select id="profile"></select>
         </label>
         <label class="field">
-          <span>Pas <i>p</i></span>
+          <span>Pitch <i>p</i></span>
           <div class="num"><input id="pitch" type="number" min="0.1" step="0.001" inputmode="decimal"><em>mm</em></div>
         </label>
       </section>
 
       <section class="group" data-show="timing">
-        <h2>Roți</h2>
+        <h2>Pulleys</h2>
         <div class="pair">
           <label class="field">
-            <span>Roata 1 · <i>z</i>₁</span>
+            <span>Pulley 1 · <i>z</i>₁</span>
             <div class="num stepper">
-              <button type="button" data-step="-1" data-for="z1" aria-label="Scade">−</button>
+              <button type="button" data-step="-1" data-for="z1" aria-label="Decrease">−</button>
               <input id="z1" type="number" min="6" step="1" inputmode="numeric">
-              <button type="button" data-step="1" data-for="z1" aria-label="Crește">+</button>
+              <button type="button" data-step="1" data-for="z1" aria-label="Increase">+</button>
             </div>
           </label>
           <label class="field">
-            <span>Roata 2 · <i>z</i>₂</span>
+            <span>Pulley 2 · <i>z</i>₂</span>
             <div class="num stepper">
-              <button type="button" data-step="-1" data-for="z2" aria-label="Scade">−</button>
+              <button type="button" data-step="-1" data-for="z2" aria-label="Decrease">−</button>
               <input id="z2" type="number" min="6" step="1" inputmode="numeric">
-              <button type="button" data-step="1" data-for="z2" aria-label="Crește">+</button>
+              <button type="button" data-step="1" data-for="z2" aria-label="Increase">+</button>
             </div>
           </label>
         </div>
       </section>
 
       <section class="group" data-show="diameter">
-        <h2>Diametre de pitch</h2>
+        <h2>Pitch diameters</h2>
         <div class="pair">
           <label class="field">
-            <span>Roata 1 · <i>D</i>₁</span>
+            <span>Pulley 1 · <i>D</i>₁</span>
             <div class="num"><input id="D1" type="number" min="1" step="0.1" inputmode="decimal"><em>mm</em></div>
           </label>
           <label class="field">
-            <span>Roata 2 · <i>D</i>₂</span>
+            <span>Pulley 2 · <i>D</i>₂</span>
             <div class="num"><input id="D2" type="number" min="1" step="0.1" inputmode="decimal"><em>mm</em></div>
           </label>
         </div>
       </section>
 
       <section class="group">
-        <h2>Distanța dintre centre</h2>
+        <h2>Center distance</h2>
         <label class="field">
-          <span><i>C</i> dorit</span>
+          <span>Target <i>C</i></span>
           <div class="num"><input id="C" type="number" min="1" step="0.1" inputmode="decimal"><em>mm</em></div>
         </label>
-        <input id="C-range" class="range" type="range" min="5" max="800" step="0.5" aria-label="Distanța dintre centre">
+        <input id="C-range" class="range" type="range" min="5" max="800" step="0.5" aria-label="Center distance">
       </section>
 
       <section class="group" data-show="timing">
-        <h2>Cureaua aleasă</h2>
-        <div class="seg seg-3" id="round" role="group" aria-label="Rotunjire">
-          <button type="button" data-round="down" title="Curea mai scurtă: roțile se apropie, cureaua iese întinsă">Mai scurtă</button>
-          <button type="button" data-round="near">Cea mai apropiată</button>
-          <button type="button" data-round="up" title="Curea mai lungă: roțile se depărtează">Mai lungă</button>
+        <h2>Selected belt</h2>
+        <div class="seg seg-3" id="round" role="group" aria-label="Rounding">
+          <button type="button" data-round="down" title="Shorter belt: pulleys move closer, belt ends up tensioned">Shorter</button>
+          <button type="button" data-round="near">Nearest</button>
+          <button type="button" data-round="up" title="Longer belt: pulleys move apart">Longer</button>
         </div>
         <label class="field">
-          <span>Dinți curea</span>
+          <span>Belt teeth</span>
           <div class="num stepper">
-            <button type="button" data-step="-1" data-for="teeth" aria-label="Scade">−</button>
+            <button type="button" data-step="-1" data-for="teeth" aria-label="Decrease">−</button>
             <input id="teeth" type="number" min="10" step="1" inputmode="numeric">
-            <button type="button" data-step="1" data-for="teeth" aria-label="Crește">+</button>
+            <button type="button" data-step="1" data-for="teeth" aria-label="Increase">+</button>
           </div>
         </label>
       </section>
@@ -122,7 +122,7 @@
 
     <section class="main">
       <div class="stage-card">
-        <svg id="stage" viewBox="0 0 1000 560" role="img" aria-label="Desenul celor două roți și al curelei">
+        <svg id="stage" viewBox="0 0 1000 560" role="img" aria-label="Drawing of the two pulleys and the belt">
           <defs>
             <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
               <path d="M20 0H0V20" class="grid-line"/>
@@ -148,9 +148,9 @@
           <button class="ghost-btn" id="play" type="button" aria-pressed="true">
             <svg viewBox="0 0 16 16" aria-hidden="true" class="ic-pause"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>
             <svg viewBox="0 0 16 16" aria-hidden="true" class="ic-play"><path d="M4 2.2v11.6a.6.6 0 0 0 .9.5l9.4-5.8a.6.6 0 0 0 0-1L4.9 1.7a.6.6 0 0 0-.9.5z"/></svg>
-            <span>Pauză</span>
+            <span>Pause</span>
           </button>
-          <span class="hint">Trage roata din dreapta ca să schimbi distanța</span>
+          <span class="hint">Drag the right pulley to change the distance</span>
         </div>
       </div>
 
@@ -159,13 +159,13 @@
     </section>
 
     <section class="formulas" aria-labelledby="f-title">
-      <h2 id="f-title">Calculul pas cu pas</h2>
+      <h2 id="f-title">Step-by-step calculation</h2>
       <div class="formula-list" id="formulas"></div>
     </section>
   </main>
 
   <footer class="foot">
-    Unități în mm. Diametrele exterioare (≈) depind de producătorul roții.
+    All units in mm. Outside diameters (≈) vary slightly by pulley manufacturer.
   </footer>
 </body>
 </html>

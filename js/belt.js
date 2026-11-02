@@ -1,6 +1,6 @@
-// Calcule pentru o transmisie cu curea deschisă între două roți.
-// Toate lungimile sunt în mm, toate unghiurile în radiani.
-// Fișierul nu depinde de browser, așa că poate fi testat direct cu Node.
+// Math for an open belt drive between two pulleys.
+// All lengths are in mm, all angles in radians.
+// This file has no browser dependencies, so it can be tested directly with Node.
 
 export const PROFILES = [
   { id: 'gt2-2', name: 'GT2 · 2 mm', pitch: 2, pld: 0.254 },
@@ -9,18 +9,18 @@ export const PROFILES = [
   { id: 'htd-3m', name: 'HTD 3M', pitch: 3, pld: 0.381 },
   { id: 'htd-5m', name: 'HTD 5M', pitch: 5, pld: 0.5715 },
   { id: 'htd-8m', name: 'HTD 8M', pitch: 8, pld: 0.686 },
-  { id: 'mxl', name: 'MXL · 2,032 mm', pitch: 2.032, pld: 0.254 },
-  { id: 'xl', name: 'XL · 5,08 mm', pitch: 5.08, pld: 0.254 },
-  { id: 'custom', name: 'Alt pas…', pitch: null, pld: 0 },
+  { id: 'mxl', name: 'MXL · 2.032 mm', pitch: 2.032, pld: 0.254 },
+  { id: 'xl', name: 'XL · 5.08 mm', pitch: 5.08, pld: 0.254 },
+  { id: 'custom', name: 'Custom pitch…', pitch: null, pld: 0 },
 ];
 
-/** Diametrul de pitch al unei roți dințate: D = z·p / π */
+/** Pitch diameter of a toothed pulley: D = z·p / π */
 export const pitchDiameter = (z, p) => (z * p) / Math.PI;
 
 /**
- * Geometria înfășurării pentru distanța C și diametrele D1, D2.
- * phi are semn: e pozitiv când roata 2 e mai mare decât roata 1.
- * Întoarce null dacă geometria e imposibilă.
+ * Wrap geometry for center distance C and diameters D1, D2.
+ * phi is signed: positive when pulley 2 is larger than pulley 1.
+ * Returns null if the geometry is impossible.
  */
 export function wrap(C, D1, D2) {
   const d = D2 - D1;
@@ -28,26 +28,26 @@ export function wrap(C, D1, D2) {
   const phi = Math.asin(d / (2 * C));
   return {
     phi,
-    span: C * Math.cos(phi),          // lungimea unei porțiuni drepte
-    wrap1: Math.PI - 2 * phi,         // unghiul de înfășurare pe roata 1
-    wrap2: Math.PI + 2 * phi,         // unghiul de înfășurare pe roata 2
+    span: C * Math.cos(phi),          // length of one straight span
+    wrap1: Math.PI - 2 * phi,         // wrap angle on pulley 1
+    wrap2: Math.PI + 2 * phi,         // wrap angle on pulley 2
   };
 }
 
-/** Lungimea exactă a curelei. */
+/** Exact belt length. */
 export function beltLength(C, D1, D2) {
   const g = wrap(C, D1, D2);
   if (!g) return NaN;
   return 2 * g.span + (Math.PI * (D1 + D2)) / 2 + g.phi * (D2 - D1);
 }
 
-/** Lungimea aproximativă: L ≈ 2C + π(D1+D2)/2 + (D2−D1)²/(4C) */
+/** Approximate length: L ≈ 2C + π(D1+D2)/2 + (D2−D1)²/(4C) */
 export function beltLengthApprox(C, D1, D2) {
   if (!(C > 0)) return NaN;
   return 2 * C + (Math.PI * (D1 + D2)) / 2 + (D2 - D1) ** 2 / (4 * C);
 }
 
-/** Distanța dintre centre din formula aproximativă, inversată. */
+/** Center distance from the approximate formula, inverted. */
 export function centerDistanceApprox(L, D1, D2) {
   const b = 2 * L - Math.PI * (D1 + D2);
   const disc = b * b - 8 * (D2 - D1) ** 2;
@@ -56,8 +56,8 @@ export function centerDistanceApprox(L, D1, D2) {
 }
 
 /**
- * Distanța dintre centre pentru o curea de lungime L, din formula exactă.
- * L(C) e strict crescătoare (dL/dC = 2·cos φ), deci căutarea binară e sigură.
+ * Center distance for a belt of length L, from the exact formula.
+ * L(C) is strictly increasing (dL/dC = 2·cos φ), so bisection always converges.
  */
 export function centerDistance(L, D1, D2) {
   const d = Math.abs(D2 - D1);
@@ -75,10 +75,10 @@ export function centerDistance(L, D1, D2) {
 }
 
 /**
- * Traseul curelei pe linia de pitch, pentru desen și animație.
- * Roata 1 e în (0, 0), roata 2 în (C, 0); y crește în sus.
- * Cureaua e parcursă în sensul acelor de ceasornic:
- * dreapta de sus → arcul roții 2 → dreapta de jos → arcul roții 1.
+ * Belt path along the pitch line, for drawing and animation.
+ * Pulley 1 is at (0, 0), pulley 2 at (C, 0); y points up.
+ * The belt runs clockwise:
+ * upper span → arc on pulley 2 → lower span → arc on pulley 1.
  */
 export function beltLoop(C, r1, r2) {
   const phi = Math.asin((r2 - r1) / C);
@@ -99,7 +99,7 @@ export function beltLoop(C, r1, r2) {
   const s2 = s1 + span;
   const L = s2 + r1 * w1;
 
-  // Punct pe traseu la distanța s: poziție, tangentă (sensul de mers) și normala spre interior.
+  // Point at path distance s: position, tangent (direction of travel) and inward normal.
   function at(s) {
     s = ((s % L) + L) % L;
     if (s < s0) {
@@ -134,9 +134,9 @@ export function beltLoop(C, r1, r2) {
 }
 
 /**
- * Calculul complet.
+ * Full calculation.
  * input = { mode: 'timing' | 'diameter', C,
- *           timing:   pitch, pld, z1, z2, teeth (număr | 'near' | 'down' | 'up')
+ *           timing:   pitch, pld, z1, z2, teeth (number | 'near' | 'down' | 'up')
  *           diameter: D1, D2 }
  */
 export function solve(input) {
@@ -163,7 +163,7 @@ export function solve(input) {
     r.valid = false;
     r.warnings.push({
       level: 'error',
-      text: 'Distanța dintre centre e prea mică pentru aceste roți: cureaua nu le poate înfășura.',
+      text: 'The center distance is too small for these pulleys: the belt cannot wrap around them.',
     });
     return r;
   }
@@ -181,7 +181,7 @@ export function solve(input) {
 
     r.Lbelt = r.teeth * p;
     r.Cactual = centerDistance(r.Lbelt, D1, D2);
-    // la distanțe foarte mici, rotunjirea în jos poate da o curea imposibilă: urcăm un dinte
+    // at very small distances, rounding down can give an impossible belt: go up one tooth
     if (!Number.isFinite(r.Cactual) && typeof rule !== 'number') {
       r.teeth += 1;
       r.Lbelt = r.teeth * p;
@@ -192,7 +192,7 @@ export function solve(input) {
       r.valid = false;
       r.warnings.push({
         level: 'error',
-        text: `O curea de ${r.teeth} dinți e prea scurtă pentru aceste roți.`,
+        text: `A ${r.teeth}-tooth belt is too short for these pulleys.`,
       });
       return r;
     }
@@ -214,23 +214,23 @@ export function solve(input) {
 
   const gap = r.Cactual - (r.OD1 + r.OD2) / 2;
   if (gap < 0) {
-    r.warnings.push({ level: 'error', text: 'Roțile se suprapun la distanța asta.' });
+    r.warnings.push({ level: 'error', text: 'The pulleys overlap at this distance.' });
   } else if (gap < 2) {
     r.warnings.push({
       level: 'warn',
-      text: `Între roți rămân doar ${gap.toFixed(1).replace('.', ',')} mm.`,
+      text: `Only ${gap.toFixed(1)} mm of clearance between the pulleys.`,
     });
   }
   if (timing && r.meshTeeth < 6) {
     r.warnings.push({
       level: 'warn',
-      text: `Pe roata mică sunt doar ${r.meshTeeth.toFixed(1).replace('.', ',')} dinți în angrenare. Sub 6, cureaua poate sări sub sarcină.`,
+      text: `Only ${r.meshTeeth.toFixed(1)} teeth in mesh on the small pulley. Below 6, the belt can skip under load.`,
     });
   }
   if ((r.wrapSmall * 180) / Math.PI < 120) {
     r.warnings.push({
       level: 'warn',
-      text: 'Unghiul de înfășurare pe roata mică e sub 120°. Mărește distanța sau folosește un întinzător.',
+      text: 'Wrap angle on the small pulley is below 120°. Increase the distance or add an idler.',
     });
   }
 

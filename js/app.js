@@ -28,7 +28,7 @@ const DEFAULTS = {
   D1: 40,
   D2: 80,
   C: 100,
-  teeth: 'near', // 'near' | 'down' | 'up' | număr
+  teeth: 'near', // 'near' | 'down' | 'up' | number
 };
 
 const state = loadState();
@@ -41,16 +41,16 @@ let offset = 0;
 let lastTime = 0;
 let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- formatare ---------- */
+/* ---------- formatting ---------- */
 
-const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d).replace('.', ',') : '—');
-const texP = (n) => String(+n.toFixed(3)).replace('.', '{,}');
-const tex = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d).replace('.', '{,}') : '?');
+const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '—');
+const texP = (n) => String(+n.toFixed(3));
+const tex = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '?');
 const toDeg = (r) => (r * 180) / Math.PI;
 const signed = (n, d = 2) => (n > 0.004 ? '+' : n < -0.004 ? '−' : '±') + fmt(Math.abs(n), d);
 const profile = () => PROFILES.find((p) => p.id === state.profile) || PROFILES[0];
 
-/* ---------- starea în URL ---------- */
+/* ---------- state in the URL ---------- */
 
 function loadState() {
   const s = { ...DEFAULTS };
@@ -93,7 +93,7 @@ function saveState() {
   history.replaceState(null, '', '#' + q.toString());
 }
 
-/* ---------- controale ---------- */
+/* ---------- controls ---------- */
 
 function initControls() {
   $('#profile').innerHTML = PROFILES.map((p) => `<option value="${p.id}">${p.name}</option>`).join('');
@@ -158,9 +158,9 @@ function initControls() {
   $('#share').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(location.href);
-      toast('Link copiat');
+      toast('Link copied');
     } catch {
-      toast('Copiază adresa din bara browserului');
+      toast('Copy the address from the browser bar');
     }
   });
 
@@ -216,7 +216,7 @@ function setPlaying(on) {
   playing = on;
   const b = $('#play');
   b.setAttribute('aria-pressed', String(on));
-  b.querySelector('span').textContent = on ? 'Pauză' : 'Pornește';
+  b.querySelector('span').textContent = on ? 'Pause' : 'Play';
 }
 
 function toast(text) {
@@ -232,7 +232,7 @@ function toast(text) {
   toast.t = setTimeout(() => el.classList.remove('show'), 1600);
 }
 
-/* ---------- actualizare ---------- */
+/* ---------- update ---------- */
 
 function update() {
   const timing = state.mode === 'timing';
@@ -261,7 +261,7 @@ function update() {
   saveState();
 }
 
-/* ---------- desen ---------- */
+/* ---------- drawing ---------- */
 
 const svgPt = (x, y) => `${x.toFixed(3)} ${y.toFixed(3)}`;
 
@@ -277,7 +277,7 @@ function computeFit(xmin, xmax, rmax) {
   };
 }
 
-// Conturul unei roți, centrat în origine. Roțile dințate au goluri pentru dinții curelei.
+// Pulley outline centered at the origin. Toothed pulleys get grooves for the belt teeth.
 function pulleyOutline(ro, z, p) {
   if (!z) {
     return `M ${ro} 0 A ${ro} ${ro} 0 1 1 ${-ro} 0 A ${ro} ${ro} 0 1 1 ${ro} 0 Z`;
@@ -296,12 +296,12 @@ function pulleyOutline(ro, z, p) {
   return d + ' Z';
 }
 
-// Butucul, alezajul și găurile de ușurare (desenate ca goluri, cu fill-rule evenodd).
+// Hub, bore and lightening holes (drawn as cutouts with fill-rule evenodd).
 function pulleyCutouts(rRim, pd) {
   const bore = Math.max(1.4, Math.min(4, rRim * 0.2));
   const hub = Math.max(bore * 2.1, rRim * 0.42);
   let d = '';
-  // alezaj cu o porțiune plată (arbore D)
+  // D-shaped bore
   const f = bore * 0.78;
   const fa = Math.acos(f / bore);
   d += ` M ${svgPt(f, -bore * Math.sin(fa))}`;
@@ -361,7 +361,7 @@ function renderStage() {
     annot.innerHTML = '';
     scene = null;
     msg.hidden = false;
-    msg.textContent = r.warnings[0]?.text || 'Date invalide.';
+    msg.textContent = r.warnings[0]?.text || 'Invalid input.';
     return;
   }
   msg.hidden = true;
@@ -375,7 +375,7 @@ function renderStage() {
   const C = r.Cactual;
   const Cd = state.C;
 
-  // grosimea curelei, în mm; are un minim vizibil pe ecran
+  // belt thickness in mm, with a minimum visible size on screen
   const back = timing ? 0.32 * p : Math.max(1.5, 0.06 * Math.min(r1, r2));
   const toothH = timing ? 0.38 * p : 0;
   const rmax = Math.max(r1, r2) + back;
@@ -400,7 +400,7 @@ function renderStage() {
   `;
 
   const loop = beltLoop(C, r1, r2);
-  // spațierea semnelor de mișcare: un număr întreg de semne pe toată cureaua
+  // spacing of the motion marks: a whole number of marks around the belt
   const markCount = Math.max(1, Math.round(loop.L / (64 / sc)));
   scene = {
     timing, p, r1, r2, loop, showTeeth, toothH,
@@ -408,7 +408,7 @@ function renderStage() {
     N: timing ? r.teeth : 0,
     marks: markCount,
     bodyW,
-    // fazele roților, ca golurile să cadă exact sub dinții curelei
+    // pulley phases, so the grooves line up exactly with the belt teeth
     c1: timing ? -loop.a + loop.s2 / r1 : 0,
     c2: timing ? loop.a + loop.s0 / r2 : 0,
     rot1: $('#rot1'),
@@ -418,7 +418,7 @@ function renderStage() {
   };
   drawDynamic();
 
-  // adnotări, în coordonatele ecranului
+  // annotations, in screen coordinates
   const S = (x, y) => [ox + x * sc, oy - y * sc];
   const [x1, cy] = S(0, 0);
   const [x2] = S(C, 0);
@@ -446,7 +446,7 @@ function renderStage() {
     <path class="dim-ext" d="M${x1} ${cy + ro1 * sc + 8}V${yDim + 8}M${x2} ${cy + ro2 * sc + 8}V${yDim + 8}"/>
     ${showGap ? dimLine(x1, x2, yDim, dimText.length * fontPx * 0.62 + 16) : ''}
     <text class="svg-label dim" x="${(x1 + x2) / 2}" y="${yDim + (showGap ? 5 : 22)}" text-anchor="middle">${dimText}</text>
-    ${ghost ? `<text class="svg-label small" x="${(x1 + x2) / 2}" y="${yDim + (showGap ? 1.9 : 3) * fontPx}" text-anchor="middle">dorit ${fmt(Cd)} mm · ${signed(r.delta)} mm</text>` : ''}
+    ${ghost ? `<text class="svg-label small" x="${(x1 + x2) / 2}" y="${yDim + (showGap ? 1.9 : 3) * fontPx}" text-anchor="middle">target ${fmt(Cd)} mm · ${signed(r.delta)} mm</text>` : ''}
     ${ghost && Math.abs(xd - x2) > 14 ? cross(xd, cy, 5) : ''}
   `;
 }
@@ -480,7 +480,7 @@ function drawDynamic() {
     s.teeth.setAttribute('d', '');
   }
 
-  // semne pe spatele curelei ca să se vadă mișcarea
+  // marks on the back of the belt so the motion is visible
   const step = L.L / s.marks;
   const inner = s.timing ? -s.pld : 0;
   const outer = inner + s.bodyW;
@@ -504,7 +504,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-/* ---------- tragere cu mouse-ul ---------- */
+/* ---------- dragging ---------- */
 
 function initDrag() {
   const svg = $('#stage');
@@ -517,7 +517,7 @@ function initDrag() {
 
   svg.addEventListener('pointerdown', (e) => {
     if (!fit || !result?.valid) return;
-    // hit-test geometric: oriunde în interiorul roții 2 (sau al conturului dorit)
+    // geometric hit test: anywhere inside pulley 2 (or the target outline)
     const pt = toVB(e);
     const wx = (pt.x - fit.ox) / fit.sc;
     const wy = (fit.oy - pt.y) / fit.sc;
@@ -557,7 +557,7 @@ function initDrag() {
   svg.addEventListener('pointercancel', end);
 }
 
-/* ---------- rezultate ---------- */
+/* ---------- results ---------- */
 
 function card(k, v, unit, sub, cls = '') {
   return `<div class="card ${cls}">
@@ -577,26 +577,26 @@ function renderResults() {
   const timing = r.mode === 'timing';
   const cards = [];
 
-  cards.push(card('Lungime curea calculată', fmt(r.L), 'mm', `aproximativ <b>${fmt(r.Lapprox)}</b> mm`, 'primary'));
+  cards.push(card('Calculated belt length', fmt(r.L), 'mm', `approximate <b>${fmt(r.Lapprox)}</b> mm`, 'primary'));
 
   if (timing) {
-    cards.push(card('Curea aleasă', `${r.teeth}`, 'dinți',
-      `<b>${fmt(r.Lbelt, 1)}</b> mm · calculat <b>${fmt(r.teethExact)}</b>`));
-    cards.push(card('Distanță reală', fmt(r.Cactual), 'mm',
-      Math.abs(r.delta) < 0.005 ? 'identică cu cea dorită' : `<b>${signed(r.delta)}</b> mm față de dorit`));
+    cards.push(card('Selected belt', `${r.teeth}`, 'teeth',
+      `<b>${fmt(r.Lbelt, 1)}</b> mm · calculated <b>${fmt(r.teethExact)}</b>`));
+    cards.push(card('Actual center distance', fmt(r.Cactual), 'mm',
+      Math.abs(r.delta) < 0.005 ? 'same as target' : `<b>${signed(r.delta)}</b> mm from target`));
   }
 
-  cards.push(card('Raport de transmisie', `1 : ${fmt(r.ratio)}`, '',
+  cards.push(card('Drive ratio', `1 : ${fmt(r.ratio)}`, '',
     timing ? `${r.z1}T → ${r.z2}T` : `Ø${fmt(r.D1, 1)} → Ø${fmt(r.D2, 1)}`));
 
-  cards.push(card('Înfășurare roata mică', fmt(toDeg(r.wrapSmall), 1), '°',
-    timing ? `<b>${fmt(r.meshTeeth, 1)}</b> dinți în angrenare` : `roata mare: <b>${fmt(toDeg(r.wrapLarge), 1)}</b>°`));
+  cards.push(card('Wrap on small pulley', fmt(toDeg(r.wrapSmall), 1), '°',
+    timing ? `<b>${fmt(r.meshTeeth, 1)}</b> teeth in mesh` : `large pulley: <b>${fmt(toDeg(r.wrapLarge), 1)}</b>°`));
 
-  cards.push(card('Porțiune liberă', fmt(r.span), 'mm', 'între punctele de tangență'));
+  cards.push(card('Free span', fmt(r.span), 'mm', 'between tangent points'));
 
   if (timing) {
-    cards.push(card('Diametre de pitch', `${fmt(r.D1)} / ${fmt(r.D2)}`, 'mm',
-      `exterior ≈ <b>${fmt(r.OD1)}</b> / <b>${fmt(r.OD2)}</b> mm`));
+    cards.push(card('Pitch diameters', `${fmt(r.D1)} / ${fmt(r.D2)}`, 'mm',
+      `outside ≈ <b>${fmt(r.OD1)}</b> / <b>${fmt(r.OD2)}</b> mm`));
   }
 
   el.innerHTML = cards.join('');
@@ -610,20 +610,20 @@ function renderWarnings() {
     .join('');
 }
 
-/* ---------- formule ---------- */
+/* ---------- formulas ---------- */
 
 function formulaList() {
   const r = result;
   const timing = r.mode === 'timing';
   const C = r.C;
   const mm = '\\,\\text{mm}';
-  // fiecare formulă pe rânduri: forma generală, valorile, rezultatul
+  // each formula on separate rows: general form, values, result
   const al = (...rows) => `\\begin{aligned} ${rows.join(' \\\\[4pt] ')} \\end{aligned}`;
   const list = [];
 
   if (timing) {
     list.push({
-      lbl: 'Diametrele de pitch',
+      lbl: 'Pitch diameters',
       tex: al(
         `D_1 &= \\frac{z_1\\, p}{\\pi} = \\frac{${r.z1}\\cdot ${texP(r.p)}}{\\pi} = ${tex(r.D1)}${mm}`,
         `D_2 &= \\frac{z_2\\, p}{\\pi} = \\frac{${r.z2}\\cdot ${texP(r.p)}}{\\pi} = ${tex(r.D2)}${mm}`,
@@ -635,14 +635,14 @@ function formulaList() {
 
   const phi = Math.asin((r.D2 - r.D1) / (2 * C));
   list.push({
-    lbl: 'Unghiul porțiunii drepte',
+    lbl: 'Span angle',
     tex: al(
       `\\varphi &= \\arcsin\\frac{D_2 - D_1}{2C}`,
       `&= \\arcsin\\frac{${tex(r.D2)} - ${tex(r.D1)}}{2\\cdot ${tex(C)}} = ${tex(phi, 4)}\\ \\text{rad}`,
     ),
   });
   list.push({
-    lbl: 'Lungimea exactă',
+    lbl: 'Exact length',
     tex: al(
       `L &= 2C\\cos\\varphi + \\frac{\\pi\\,(D_1 + D_2)}{2} + \\varphi\\,(D_2 - D_1)`,
       `&= ${tex(2 * C * Math.cos(phi))} + ${tex(Math.PI * (r.D1 + r.D2) / 2)} + ${tex(phi * (r.D2 - r.D1))}`,
@@ -650,7 +650,7 @@ function formulaList() {
     ),
   });
   list.push({
-    lbl: 'Lungimea aproximativă',
+    lbl: 'Approximate length',
     tex: al(
       `L &\\approx 2C + \\frac{\\pi\\,(D_1 + D_2)}{2} + \\frac{(D_2 - D_1)^2}{4C}`,
       `&= ${tex(2 * C)} + ${tex(Math.PI * (r.D1 + r.D2) / 2)} + ${tex((r.D2 - r.D1) ** 2 / (4 * C))}`,
@@ -661,32 +661,32 @@ function formulaList() {
   if (timing && r.valid) {
     const b = 2 * r.Lbelt - Math.PI * (r.D1 + r.D2);
     list.push({
-      lbl: 'Numărul de dinți ai curelei',
+      lbl: 'Belt tooth count',
       tex: al(
         `N &= \\frac{L}{p} = \\frac{${tex(r.L)}}{${texP(r.p)}} = ${tex(r.teethExact)} \\;\\Rightarrow\\; N = ${r.teeth}`,
         `L_c &= N\\, p = ${r.teeth}\\cdot ${texP(r.p)} = ${tex(r.Lbelt, 1)}${mm}`,
       ),
     });
     list.push({
-      lbl: 'Distanța reală pentru cureaua aleasă',
+      lbl: 'Actual distance for the selected belt',
       tex: al(
         `b &= 2L_c - \\pi\\,(D_1 + D_2) = ${tex(b)}`,
         `C' &= \\frac{b + \\sqrt{b^2 - 8\\,(D_2 - D_1)^2}}{8} = ${tex(r.CactualApprox)}${mm}`,
       ),
     });
     list.push({
-      lbl: 'Dinți în angrenare pe roata mică',
+      lbl: 'Teeth in mesh on the small pulley',
       tex: al(
         `\\theta &= \\pi - 2\\,|\\varphi'| = ${tex(toDeg(r.wrapSmall), 1)}^\\circ`,
-        `z_{\\text{angr}} &= z_{\\min}\\,\\frac{\\theta}{2\\pi} = ${tex(r.meshTeeth, 1)}`,
+        `z_{\\text{mesh}} &= z_{\\min}\\,\\frac{\\theta}{2\\pi} = ${tex(r.meshTeeth, 1)}`,
       ),
     });
   } else if (!timing) {
     list.push({
-      lbl: 'Unghiurile de înfășurare',
+      lbl: 'Wrap angles',
       tex: al(
-        `\\theta_{\\text{mică}} &= \\pi - 2\\,|\\varphi| = ${tex(toDeg(r.wrapSmall), 1)}^\\circ`,
-        `\\theta_{\\text{mare}} &= \\pi + 2\\,|\\varphi| = ${tex(toDeg(r.wrapLarge), 1)}^\\circ`,
+        `\\theta_{\\text{small}} &= \\pi - 2\\,|\\varphi| = ${tex(toDeg(r.wrapSmall), 1)}^\\circ`,
+        `\\theta_{\\text{large}} &= \\pi + 2\\,|\\varphi| = ${tex(toDeg(r.wrapLarge), 1)}^\\circ`,
       ),
     });
   }
@@ -712,7 +712,7 @@ function renderFormulas() {
   });
 }
 
-/* ---------- pornire ---------- */
+/* ---------- startup ---------- */
 
 try {
   const t = localStorage.getItem('theme');
@@ -726,7 +726,7 @@ update();
 addEventListener('resize', () => sizeStage() && update());
 requestAnimationFrame(frame);
 
-// KaTeX vine de pe CDN; dacă se încarcă după noi, refacem formulele
+// KaTeX comes from a CDN; if it loads after us, re-render the formulas
 if (!window.katex) {
   window.addEventListener('load', () => window.katex && renderFormulas());
 }

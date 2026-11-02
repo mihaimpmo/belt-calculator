@@ -1,23 +1,23 @@
-# Calculator curea
+# Belt Calculator
 
-Calculator pentru transmisii cu curea între două roți: lungimea curelei, numărul de dinți, distanța reală dintre centre după ce alegi o curea din comerț și câți dinți intră în angrenare pe roata mică. Desenul roților și al curelei e animat și se actualizează pe loc.
+A calculator for two-pulley belt drives: belt length, tooth count, the actual center distance once you pick a belt you can buy, and how many teeth are in mesh on the small pulley. The pulleys and belt are drawn and animated, and update as you type.
 
-![Captură de ecran](assets/screenshot.png)
+![Screenshot](assets/screenshot.png)
 
-## Ce face
+## Features
 
-- **Curea dințată** (GT2, HTD, MXL, XL sau alt pas): introduci dinții roților și distanța dorită, primești cureaua potrivită și distanța reală la care trebuie montate roțile.
-- **Diametre**: pentru curele netede, rotunde sau trapezoidale, introduci direct diametrele.
-- Alegi cureaua **mai scurtă**, **cea mai apropiată** sau **mai lungă**, sau scrii manual numărul de dinți.
-- **Trage roata din dreapta** în desen ca să schimbi distanța.
-- Avertizări pentru roți care se ating, prea puțini dinți în angrenare (sub 6) sau unghi de înfășurare mic (sub 120°).
-- Secțiunea **Calculul pas cu pas** arată formulele cu valorile tale.
-- Toate datele stau în link, deci **Copiază link** salvează exact configurația.
-- Temă deschisă și închisă, funcționează și pe telefon.
+- **Timing belts** (GT2, HTD, MXL, XL or a custom pitch): enter the pulley tooth counts and the center distance you want, get the matching belt and the actual distance to mount the pulleys at.
+- **Diameters**: for flat, round or V-belts, enter the pitch diameters directly.
+- Pick the **shorter**, **nearest** or **longer** belt, or type a tooth count.
+- **Drag the right pulley** in the drawing to change the distance.
+- Warnings for pulleys that touch, too few teeth in mesh (below 6) or a small wrap angle (below 120°).
+- The **step-by-step calculation** shows every formula with your numbers.
+- The whole configuration lives in the URL, so **Copy link** saves exactly what you see.
+- Light and dark theme, works on phones.
 
-## Formulele
+## Formulas
 
-Cu $C$ distanța dintre centre și $D_1$, $D_2$ diametrele de pitch:
+With $C$ the center distance and $D_1$, $D_2$ the pitch diameters:
 
 $$
 \varphi = \arcsin\frac{D_2 - D_1}{2C}
@@ -27,68 +27,68 @@ $$
 L = 2C\cos\varphi + \frac{\pi(D_1 + D_2)}{2} + \varphi\,(D_2 - D_1)
 $$
 
-Aproximarea uzuală:
+The usual approximation:
 
 $$
 L \approx 2C + \frac{\pi(D_1 + D_2)}{2} + \frac{(D_2 - D_1)^2}{4C}
 $$
 
-Pentru roți dințate cu $z$ dinți și pasul $p$:
+For toothed pulleys with $z$ teeth and pitch $p$:
 
 $$
 D = \frac{z\,p}{\pi}, \qquad N = \frac{L}{p}
 $$
 
-Distanța pentru o curea de lungime $L_c = N p$ (din formula aproximativă):
+Center distance for a belt of length $L_c = N p$ (from the approximate formula):
 
 $$
 b = 2L_c - \pi(D_1 + D_2), \qquad C = \frac{b + \sqrt{b^2 - 8(D_2 - D_1)^2}}{8}
 $$
 
-Aplicația rezolvă distanța reală din formula exactă, numeric. Lungimea exactă crește strict cu $C$ ($dL/dC = 2\cos\varphi$), deci căutarea binară converge mereu.
+The app solves the actual center distance from the exact formula numerically. The exact length is strictly increasing in $C$ ($dL/dC = 2\cos\varphi$), so bisection always converges.
 
-## Structura
+## Project layout
 
 ```
-index.html          pagina
-css/style.css       stilurile (temă deschisă și închisă)
-js/belt.js          matematica, fără dependențe de browser
-js/app.js           interfața, desenul SVG și animația
-tests/belt.test.js  teste pentru formule
+index.html          the page
+css/style.css       styles (light and dark theme)
+js/belt.js          the math, no browser dependencies
+js/app.js           UI, SVG drawing and animation
+tests/belt.test.js  tests for the formulas
 ```
 
-## Rulare locală
+## Running locally
 
-Pagina folosește module ES, deci trebuie servită printr-un server, nu deschisă direct ca fișier:
+The page uses ES modules, so it has to be served over HTTP rather than opened as a file:
 
 ```bash
 python -m http.server 8000
-# apoi deschide http://localhost:8000
+# then open http://localhost:8000
 ```
 
-sau `npm start` dacă ai Node.
+or `npm start` if you have Node.
 
-Testele pentru formule (Node 18 sau mai nou):
+Formula tests (Node 18 or newer):
 
 ```bash
 npm test
 ```
 
-## Publicare pe GitHub Pages
+## Publishing on GitHub Pages
 
-1. Creează un repo pe GitHub și urcă fișierele:
+1. Create a repository on GitHub and push:
    ```bash
-   git remote add origin https://github.com/<utilizator>/calculator-curea.git
+   git remote add origin https://github.com/<user>/belt-calculator.git
    git push -u origin main
    ```
-2. În repo, mergi la **Settings → Pages** și la **Source** alege **GitHub Actions**.
-3. La fiecare push pe `main`, workflow-ul rulează testele și publică pagina la `https://<utilizator>.github.io/calculator-curea/`.
+2. In the repository, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+3. Every push to `main` runs the tests and publishes the page at `https://<user>.github.io/belt-calculator/`.
 
-## Note
+## Notes
 
-- Diametrele exterioare sunt aproximative: se calculează din diametrul de pitch minus de două ori distanța dintre linia de pitch și dinte (PLD), care diferă ușor între producători.
-- Formulele sunt pentru curea deschisă (roțile se rotesc în același sens), fără întinzător.
+- Outside diameters are approximate: they are the pitch diameter minus twice the pitch line differential (PLD), which varies slightly between manufacturers.
+- The formulas are for an open belt (both pulleys turn the same way) without an idler.
 
-## Licență
+## License
 
 MIT

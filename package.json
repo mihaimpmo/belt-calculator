@@ -1,7 +1,7 @@
 {
-  "name": "calculator-curea",
+  "name": "belt-calculator",
   "version": "1.0.0",
-  "description": "Calculator pentru lungimea curelei și distanța dintre centre, cu desen animat.",
+  "description": "Belt length and center distance calculator with an animated drawing.",
   "private": true,
   "type": "module",
   "scripts": {
